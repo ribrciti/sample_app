@@ -20,5 +20,5 @@ ActiveRecord::Schema.define(version: 20140509155509) do
     t.datetime "updated_at"
     t.string   "password_digest"
   end
-
+  
 end
