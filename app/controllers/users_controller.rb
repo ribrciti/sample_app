@@ -9,10 +9,22 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def new
     @user = User.new
+  end
+
+  def create    
+    @user = User.new(user_params)
+    if @user.save
+      sign_in @user
+      flash[:success] = "Welcome to the Sample App!"
+      redirect_to @user
+    else
+      render 'new'
+    end
   end
 
   def edit
@@ -33,17 +45,6 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
-  def create    
-    @user = User.new(user_params)
-    if @user.save
-      sign_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
-    else
-      render 'new'
-    end
-  end
-
   private
 
     def user_params
@@ -52,13 +53,6 @@ class UsersController < ApplicationController
     end
 
 # Before filters
-
-    def signed_in_user
-      unless signed_in?
-        store_location
-        redirect_to signin_url, notice: "Please sign in."
-      end
-    end
 
     def correct_user
       @user = User.find(params[:id])
